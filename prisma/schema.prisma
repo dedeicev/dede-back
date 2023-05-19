@@ -44,3 +44,8 @@ model Company {
   cnpj   String  @unique
   phone  String
 }
+
+model ServiceType {
+  id     Int     @id @default(autoincrement())
+  name   String
+}
