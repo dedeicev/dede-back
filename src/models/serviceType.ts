@@ -2,41 +2,59 @@ import { PrismaClient, ServiceType } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export interface CreateServiceType {
-  name: string;
+export interface CreateServiceTypeInput {
+  id?: number
+  name: string
+  description: string
 }
 
-export interface UpdateServiceType{
-  id: number;
-  name?: string;
+export interface UpdateServiceTypeInput{
+  id: number
+  name?: string
+  description?: string
 }
 
-export const createServiceType = async (data: CreateServiceType): Promise<CreateServiceType> => {
-  const serviceType = await prisma.serviceType.create({ data })
-  return serviceType
-}
-
-export const readServiceType = async () => {
-    const serviceType = await prisma.serviceType.findMany()
-    return serviceType
-}
-
-export const updateServiceType = async (id: number, data: UpdateServiceType): Promise<ServiceType> => {
-  const serviceType = await prisma.serviceType.update({ 
-    where: { id: data.id },
-    data: {
-      name: data.name
-    } 
+async function createServiceType (data: CreateServiceTypeInput): Promise<ServiceType> {
+  const serviceType = await prisma.serviceType.create({ 
+    data :{
+      name: data.name,
+      description: data.description,
+    }
   })
   return serviceType
 }
 
-export const deleteServiceType = async (id: number) => {
+async function updateServiceType(data: UpdateServiceTypeInput): Promise<ServiceType> {
+  const serviceType = await prisma.serviceType.update({
+    where: { id: data.id },
+    data: {
+      name: data.name,
+      description: data.description,
+    },
+  });
+
+  return serviceType;
+}
+
+async function deleteServiceType(id: number): Promise<ServiceType | null> {
   const serviceType = await prisma.serviceType.delete({ where: { id } })
   return serviceType
 }
 
-export const getServiceType = async () => {
-  const serviceType = await prisma.serviceType.findMany()
+async function getServiceTypes() {
+  const ServiceTypes = await prisma.serviceType.findMany()
+  return ServiceTypes
+}
+
+async function getServiceTypeById(id: number): Promise<ServiceType | null> {
+  const serviceType = await prisma.serviceType.findUnique({ where: { id } })
   return serviceType
+}
+
+export default {
+  createServiceType,
+  deleteServiceType,
+  getServiceTypes,
+  updateServiceType,
+  getServiceTypeById
 }
