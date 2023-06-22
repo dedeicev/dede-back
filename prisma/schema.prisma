@@ -15,14 +15,18 @@ model User {
   email String  @unique
   password String
   customer Customer?
+  company Company?
 }
 
 model Customer {
   id     Int     @id @default(autoincrement())
   user   User    @relation(fields: [userId], references: [id])
-  userId Int    @unique
-  cpf    String  @unique
+  userId Int     @unique
+  cpf    String? @unique
+  cnpj  String?  @unique
+  phone  String
   addresses Address[]
+  solicitations Solicitation[]
 }
 
 model Address {
@@ -43,4 +47,52 @@ model Company {
   name   String
   cnpj   String  @unique
   phone  String
+  userId    Int       @unique
+  user      User      @relation(fields: [userId], references: [id])
+  socialNetworks SocialNetwork[]
+  pestsTypes PestsType[]
+}
+
+model ServiceType {
+  id     Int     @id @default(autoincrement())
+  name   String
+  description String
+  solicitations Solicitation[]
+}
+
+model PestsType {
+  id     Int     @id @default(autoincrement())
+  name   String
+  description String
+  solicitations Solicitation[]
+  company Company @relation(fields: [companyId], references: [id])
+  companyId Int
+}
+
+model Solicitation {
+  id     Int     @id @default(autoincrement())
+  customer Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  serviceType ServiceType @relation(fields: [serviceTypeId], references: [id])
+  serviceTypeId Int
+  pestsType PestsType @relation(fields: [pestsTypeId], references: [id])
+  pestsTypeId Int
+  description String
+  status Status @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SocialNetwork {
+  id     Int     @id @default(autoincrement())
+  name   String
+  url    String
+  company Company @relation(fields: [companyId], references: [id])
+  companyId Int
+}
+
+enum Status {
+  PENDING
+  IN_PROGRESS
+  DONE
 }
