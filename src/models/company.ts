@@ -5,6 +5,8 @@ const prisma = new PrismaClient();
 export interface CreateCompanyInput {
     id?: number
     cnpj: string
+    name: string
+    phone: string
     user: {
         name: string
         email: string
@@ -20,6 +22,8 @@ export interface UpdateCompanyInput {
         email?: string
         password?: string
     }
+    name?: string
+    phone?: string
 }
 
 async function createCompany(data: CreateCompanyInput): Promise<Company> {
@@ -27,6 +31,8 @@ async function createCompany(data: CreateCompanyInput): Promise<Company> {
     const company = await prisma.company.create({
         data: {
             cnpj: data.cnpj,
+            name: data.name,
+            phone: data.phone,
             user: {
                 create: {
                     name: data.user.name,
@@ -50,6 +56,8 @@ async function updateCompany(data: UpdateCompanyInput): Promise<Company | null> 
         where: { id: data.id },
         data: {
             cnpj: data.cnpj,
+            name: data.name,
+            phone: data.phone,
             user: {
                 update: {
                     name: data.user.name,
